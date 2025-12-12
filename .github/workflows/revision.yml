@@ -60,7 +60,7 @@ jobs:
           # Keep only the generated JS files and hashes.json
           find . -type f ! -name "js-route-builder.js" ! -name "relay-operations.js" ! -name "x-controllers.js" ! -name "hashes.json" -delete
 
-      - name: Run diff.py between previous and current revision
+      - name: Run diff between previous and current revision
         if: always()
         run: |
           if [ -f ".current-rev" ]; then
@@ -68,15 +68,17 @@ jobs:
               NEW_VERSION="${{ github.event.inputs.version }}"
               PRODUCT="${{ github.event.inputs.product }}"
 
-              OLD_FOLDER="revisions/$PRODUCT/$OLD_VERSION"
-              NEW_FOLDER="revisions/$PRODUCT/$NEW_VERSION"
+              # convert to absolute paths
+              ROOT=$(pwd)
+              OLD_FOLDER="$ROOT/revisions/$PRODUCT/$OLD_VERSION"
+              NEW_FOLDER="$ROOT/revisions/$PRODUCT/$NEW_VERSION"
 
-              DIFF_DIR="diffs/$PRODUCT/${OLD_VERSION}-${NEW_VERSION}"
+              DIFF_DIR="$ROOT/diffs/$PRODUCT/${OLD_VERSION}-${NEW_VERSION}"
               mkdir -p "$DIFF_DIR"
 
-              # Run diff.py in the target directory so output.js is created there
+              # Run diff.py inside DIFF_DIR but using absolute paths
               pushd "$DIFF_DIR" > /dev/null
-              python3 ../../../diff.py "$OLD_FOLDER" "$NEW_FOLDER"
+              python3 "$ROOT/diff.py" "$OLD_FOLDER" "$NEW_FOLDER"
               popd > /dev/null
 
               echo "Diff saved to $DIFF_DIR/output.js"
