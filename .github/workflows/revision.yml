@@ -72,7 +72,7 @@ jobs:
               OLD_FOLDER="revisions/$PRODUCT/$OLD_VERSION"
               NEW_FOLDER="revisions/$PRODUCT/$NEW_VERSION"
 
-              DIFF_DIR="/diffs/$PRODUCT/${OLD_VERSION}-${NEW_VERSION}"
+              DIFF_DIR="diffs/$PRODUCT/${OLD_VERSION}-${NEW_VERSION}"
               mkdir -p "$DIFF_DIR"
 
               pushd "$DIFF_DIR" > /dev/null
