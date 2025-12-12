@@ -6,6 +6,7 @@ def load_hashes(path):
     file_path = os.path.join(path, "hashes.json")
     if not os.path.exists(file_path):
         print(f"[ERROR] hashes.json not found in: {path}")
+        sys.exit(1)
         return {}
 
     with open(file_path, "r", encoding="utf-8") as f:
@@ -13,6 +14,7 @@ def load_hashes(path):
             return json.load(f)
         except json.JSONDecodeError:
             print(f"[ERROR] hashes.json is corrupted in: {path}")
+            sys.exit(1)
             return {}
 
 
@@ -32,8 +34,8 @@ def main():
     new_hashes = load_hashes(compare_folder)
 
     if not source_hashes or not new_hashes:
-        print("[FATAL] Missing hashes.json from one of the folders.")
-        sys.exit(1)
+        print("[WARN] Nothing to diff because hashes.json is empty")
+        sys.exit(0)
 
     # Compute differences
     added = {}
