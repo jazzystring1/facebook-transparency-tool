@@ -69,14 +69,15 @@ jobs:
               NEW_VERSION="${{ github.event.inputs.version }}"
               PRODUCT="${{ github.event.inputs.product }}"
 
-              OLD_FOLDER="revisions/$PRODUCT/$OLD_VERSION"
-              NEW_FOLDER="revisions/$PRODUCT/$NEW_VERSION"
+              OLD_FOLDER="$ROOT/revisions/$PRODUCT/$OLD_VERSION"
+              NEW_FOLDER="$ROOT/revisions/$PRODUCT/$NEW_VERSION"
 
-              DIFF_DIR="diffs/$PRODUCT/${OLD_VERSION}-${NEW_VERSION}"
+              DIFF_DIR="$ROOT/diffs/$PRODUCT/${OLD_VERSION}-${NEW_VERSION}"
               mkdir -p "$DIFF_DIR"
+              touch $DIFF_DIR/.gitkeep
 
               pushd "$DIFF_DIR" > /dev/null
-              python3 "$ROOT/diff.py" "$ROOT/$OLD_FOLDER" "$ROOT/$NEW_FOLDER"
+              python3 "$ROOT/diff.py" "$OLD_FOLDER" "$NEW_FOLDER"
               popd > /dev/null
 
               echo "Diff saved to $DIFF_DIR/output.js"
