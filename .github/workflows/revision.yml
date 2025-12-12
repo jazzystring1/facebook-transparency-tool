@@ -76,7 +76,7 @@ jobs:
               mkdir -p "$DIFF_DIR"
 
               pushd "$DIFF_DIR" > /dev/null
-              python3 "$ROOT/diff.py" "$OLD_FOLDER" "$NEW_FOLDER"
+              python3 "$ROOT/diff.py" "$ROOT/$OLD_FOLDER" "$ROOT/$NEW_FOLDER"
               popd > /dev/null
 
               echo "Diff saved to $DIFF_DIR/output.js"
