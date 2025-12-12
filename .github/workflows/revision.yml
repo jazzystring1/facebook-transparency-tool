@@ -52,7 +52,7 @@ jobs:
       - name: Run diff.py between previous and current revision
         if: always()
         run: |
-          if [ -f ".current-rev" ]; then
+         if [ -f ".current-rev" ]; then
             OLD_VERSION=$(cat .current-rev)
             NEW_VERSION="${{ github.event.inputs.version }}"
             PRODUCT="${{ github.event.inputs.product }}"
@@ -60,15 +60,18 @@ jobs:
             OLD_FOLDER="revisions/$PRODUCT/$OLD_VERSION"
             NEW_FOLDER="revisions/$PRODUCT/$NEW_VERSION"
 
-            DIFF_OUTPUT="diffs/$PRODUCT/${OLD_VERSION}-${NEW_VERSION}/output.js"
+            DIFF_DIR="diffs/$PRODUCT/${OLD_VERSION}-${NEW_VERSION}"
+            mkdir -p "$DIFF_DIR"
 
-            mkdir -p "$(dirname "$DIFF_OUTPUT")"
-            python3 diff.py "$OLD_FOLDER" "$NEW_FOLDER" > "$DIFF_OUTPUT"
+            # Run diff.py in the target directory so output.js is created there
+            pushd "$DIFF_DIR" > /dev/null
+            python3 ../../../diff.py "$OLD_FOLDER" "$NEW_FOLDER"
+            popd > /dev/null
 
-            echo "Diff saved to $DIFF_OUTPUT"
-          else
+            echo "Diff saved to $DIFF_DIR/output.js"
+        else
             echo ".current-rev not found, skipping diff."
-          fi
+        fi
 
       - name: Save current version number
         run: |
