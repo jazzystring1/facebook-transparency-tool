@@ -30,7 +30,7 @@ jobs:
 
       - name: Download archive
         run: |
-          URL="https://drive.google.com/uc?export=download&id=19yj-woBgFejYf7lmEp0DyWgVhtoDB3lw"
+          URL="https://www.facebook.com/btarchive/${{ github.event.inputs.version }}/${{ github.event.inputs.product }}"
           TMP_ZIP=$(mktemp /tmp/archive.XXXXXX.zip)
           echo "Downloading $URL ..."
           curl -L "$URL" -o "$TMP_ZIP"
