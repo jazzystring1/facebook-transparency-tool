@@ -1,0 +1,81 @@
+name: Download & Process Revisions
+
+on:
+  workflow_dispatch:
+    inputs:
+      product:
+        description: "facebook / instagram / messenger / whatsapp"
+        required: true
+        default: "facebook"
+      version:
+        description: "Version number to download"
+        required: true
+
+jobs:
+  process_revision:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y unzip python3 python3-pip
+
+      - name: Create revisions folder
+        run: |
+          mkdir -p revisions/${{ github.event.inputs.product }}/${{ github.event.inputs.version }}
+
+      - name: Download archive
+        run: |
+          URL="https://www.facebook.com/btarchive/${{ github.event.inputs.version }}/${{ github.event.inputs.product }}"
+          echo "Downloading $URL ..."
+          curl -L "$URL" -o archive.zip
+
+      - name: Unzip archive directly into version folder
+        run: |
+          unzip archive.zip -d revisions/${{ github.event.inputs.product }}/${{ github.event.inputs.version }}
+
+      - name: Generate JS extraction files
+        working-directory: revisions/${{ github.event.inputs.product }}/${{ github.event.inputs.version }}
+        run: |
+          grep -Rh 'jsRouteBuilder")(' . > js-route-builder.js || true
+          grep -Rh 'RelayOperation",\[' . > relay-operations.js || true
+          grep -Rh 'XController").cr' . > x-controllers.js || true
+
+      - name: Run hash.py
+        run: |
+          python3 hash.py revisions/${{ github.event.inputs.product }}/${{ github.event.inputs.version }}
+
+      - name: Run diff.py between previous and current revision
+        if: always()
+        run: |
+          if [ -f ".current-rev" ]; then
+            OLD_VERSION=$(cat .current-rev)
+            NEW_VERSION="${{ github.event.inputs.version }}"
+            PRODUCT="${{ github.event.inputs.product }}"
+
+            OLD_FOLDER="revisions/$PRODUCT/$OLD_VERSION"
+            NEW_FOLDER="revisions/$PRODUCT/$NEW_VERSION"
+
+            DIFF_OUTPUT="diffs/$PRODUCT/${OLD_VERSION}-${NEW_VERSION}/output.js"
+
+            mkdir -p "$(dirname "$DIFF_OUTPUT")"
+            python3 diff.py "$OLD_FOLDER" "$NEW_FOLDER" > "$DIFF_OUTPUT"
+
+            echo "Diff saved to $DIFF_OUTPUT"
+          else
+            echo ".current-rev not found, skipping diff."
+          fi
+
+      - name: Save current version number
+        run: |
+          echo "${{ github.event.inputs.version }}" > .current-rev
+
+      - name: Commit results
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Processed revision: product=${{ github.event.inputs.product }}, version=${{ github.event.inputs.version }}"
+          branch: main
