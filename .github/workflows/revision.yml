@@ -26,17 +26,22 @@ jobs:
 
       - name: Create revisions folder
         run: |
-          mkdir -p revisions/${{ github.event.inputs.product }}/${{ github.event.inputs.version }}
+          mkdir -p "revisions/${{ github.event.inputs.product }}/${{ github.event.inputs.version }}"
 
       - name: Download archive
         run: |
           URL="https://drive.google.com/uc?export=download&id=19yj-woBgFejYf7lmEp0DyWgVhtoDB3lw"
+          TMP_ZIP=$(mktemp /tmp/archive.XXXXXX.zip)
           echo "Downloading $URL ..."
-          curl -L "$URL" -o archive.zip
+          curl -L "$URL" -o "$TMP_ZIP"
+          echo "TMP_ZIP=$TMP_ZIP" >> $GITHUB_ENV
 
       - name: Unzip archive directly into version folder
         run: |
-          unzip archive.zip -d revisions/${{ github.event.inputs.product }}/${{ github.event.inputs.version }}
+          REV_DIR="revisions/${{ github.event.inputs.product }}/${{ github.event.inputs.version }}"
+          mkdir -p "$REV_DIR"
+          unzip -q "$TMP_ZIP" -d "$REV_DIR"
+          rm -f "$TMP_ZIP"  # clean up temp zip
 
       - name: Generate JS extraction files
         working-directory: revisions/${{ github.event.inputs.product }}/${{ github.event.inputs.version }}
@@ -48,6 +53,12 @@ jobs:
       - name: Run hash.py
         run: |
           python3 hash.py revisions/${{ github.event.inputs.product }}/${{ github.event.inputs.version }}
+      
+      - name: Clean up extracted files
+        working-directory: revisions/${{ github.event.inputs.product }}/${{ github.event.inputs.version }}
+        run: |
+          # Keep only the generated JS files and hashes.json
+          find . -type f ! -name "js-route-builder.js" ! -name "relay-operations.js" ! -name "x-controllers.js" ! -name "hashes.json" -delete
 
       - name: Run diff.py between previous and current revision
         if: always()
