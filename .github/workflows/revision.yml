@@ -64,19 +64,17 @@ jobs:
         if: always()
         run: |
           if [ -f ".current-rev" ]; then
+              ROOT="$GITHUB_WORKSPACE"
               OLD_VERSION=$(cat .current-rev)
               NEW_VERSION="${{ github.event.inputs.version }}"
               PRODUCT="${{ github.event.inputs.product }}"
 
-              # convert to absolute paths
-              ROOT=$(pwd)
               OLD_FOLDER="$ROOT/revisions/$PRODUCT/$OLD_VERSION"
               NEW_FOLDER="$ROOT/revisions/$PRODUCT/$NEW_VERSION"
 
               DIFF_DIR="$ROOT/diffs/$PRODUCT/${OLD_VERSION}-${NEW_VERSION}"
               mkdir -p "$DIFF_DIR"
 
-              # Run diff.py inside DIFF_DIR but using absolute paths
               pushd "$DIFF_DIR" > /dev/null
               python3 "$ROOT/diff.py" "$OLD_FOLDER" "$NEW_FOLDER"
               popd > /dev/null
