@@ -5,8 +5,7 @@ import requests
 import hashlib
 import tldextract
 from datetime import datetime
-from urllib.parse import urlencode
-from urllib.parse import urlparse
+from urllib.parse import urlencode, urlparse
 
 # -----------------------------
 # Config
@@ -34,80 +33,55 @@ def load_json(path):
     with open(path, "r", encoding="utf-8") as f:
         return json.load(f)
 
-
 def save_json(path, data):
     with open(path, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2)
-
 
 def http_get(url):
     r = requests.get(url, timeout=REQUEST_TIMEOUT)
     r.raise_for_status()
     return r.text
 
-
 def platform_from_origin(origin: str) -> str:
     """
-    Returns the main domain name without subdomains or TLD.
+    Returns the base domain name without subdomains or TLD.
     Examples:
         https://business.facebook.com -> facebook
         www.instagram.com -> instagram
         www.test.domain.co.uk -> domain
     """
     origin = origin.strip()
-
-    # Add scheme if missing
     if not origin.startswith("http://") and not origin.startswith("https://"):
         origin = "https://" + origin
 
     parsed = urlparse(origin)
     hostname = parsed.hostname or "unknown"
 
-    # Extract domain using tldextract
     ext = tldextract.extract(hostname)
     return ext.domain or hostname
 
 def safe_js_filename(js_url: str) -> str:
-    """
-    Returns a safe filename for a JS URL.
-    - Use original filename if short and valid
-    - Otherwise, hash the URL
-    """
-    # Extract base filename from URL (strip query string)
     fname = js_url.split("/")[-1].split("?")[0]
-
-    # Remove invalid characters
     fname = re.sub(f"[{re.escape(INVALID_CHARS)}]", "_", fname)
-
-    # Hash if too long
     if len(fname) > MAX_FILENAME_LEN:
         h = hashlib.sha256(js_url.encode()).hexdigest()[:32]
         fname = f"{h}.js"
-
     return fname
 
-
-def download_js(js_url: str, hostname: str) -> str:
-    """
-    Downloads the JS file into bootloaders/{hostname}/.
-    Returns the full path to the downloaded file.
-    Skips download if file already exists.
-    """
-    folder = os.path.join(BOOTLOADERS_BASE, hostname)
+def download_js(js_url: str, platform: str) -> str:
+    folder = os.path.join(BOOTLOADERS_BASE, platform)
     os.makedirs(folder, exist_ok=True)
 
     filename = safe_js_filename(js_url)
     path = os.path.join(folder, filename)
 
     if not os.path.exists(path):
-        import requests
-        r = requests.get(js_url, timeout=30)
+        r = requests.get(js_url, timeout=REQUEST_TIMEOUT)
         r.raise_for_status()
         with open(path, "w", encoding="utf-8") as f:
             f.write(r.text)
 
     return path
-
 
 def extract_functions(js_path):
     funcs = set()
@@ -117,7 +91,6 @@ def extract_functions(js_path):
                 funcs.add(name)
     return funcs
 
-
 # -----------------------------
 # Main
 # -----------------------------
@@ -126,14 +99,12 @@ def main():
     modules_data = load_json(MODULES_JSON)
     functions_data = load_json(FUNCTIONS_JSON)
 
-    visited_js = {}                  # js_url -> set(functions)
+    visited_js = {}                  # key = (platform, js_url) -> set(functions)
     requested_modules = set()        # (origin, module)
 
     now = datetime.utcnow().isoformat() + "Z"
 
     for origin, origin_data in modules_data.get("origins", {}).items():
-
-        # Normalize base URL
         if origin.startswith("http://") or origin.startswith("https://"):
             base_url = origin.rstrip("/")
         else:
@@ -141,29 +112,23 @@ def main():
 
         platform = platform_from_origin(origin)
 
+        # Ensure platform folder exists even if JS URLs are already visited
+        os.makedirs(os.path.join(BOOTLOADERS_BASE, platform), exist_ok=True)
+
         for path, path_data in origin_data.items():
             params = path_data.get("parameters", {})
             modules = path_data.get("modules", {})
 
             for module_name in modules.keys():
-
                 dedup_key = (origin, module_name)
                 if dedup_key in requested_modules:
                     continue
-
                 requested_modules.add(dedup_key)
 
                 print(f"[+] {platform} :: {module_name}")
 
-                query = {
-                    "modules": module_name,
-                    **params
-                }
-
-                endpoint = (
-                    f"{base_url}/ajax/bootloader-endpoint/?"
-                    + urlencode(query)
-                )
+                query = {"modules": module_name, **params}
+                endpoint = f"{base_url}/ajax/bootloader-endpoint/?" + urlencode(query)
 
                 try:
                     response = http_get(endpoint)
@@ -175,15 +140,14 @@ def main():
                 module_functions = set()
 
                 for js_url in js_urls:
+                    key = (platform, js_url)
                     try:
-                        if js_url in visited_js:
-                            module_functions |= visited_js[js_url]
+                        if key in visited_js:
+                            module_functions |= visited_js[key]
                         else:
                             js_path = download_js(js_url, platform)
-                            print(platform)
-                            print(js_path)
                             funcs = extract_functions(js_path)
-                            visited_js[js_url] = funcs
+                            visited_js[key] = funcs
                             module_functions |= funcs
                     except Exception as e:
                         print(f"[-] JS error: {js_url} ({e})")
@@ -198,13 +162,11 @@ def main():
                 else:
                     existing = set(functions_data[module_name]["functions"])
                     merged = existing | module_functions
-
                     functions_data[module_name]["functions"] = sorted(merged)
                     functions_data[module_name]["last_crawled"] = now
                     functions_data[module_name]["last_updated"] = now
 
     save_json(FUNCTIONS_JSON, functions_data)
-
 
 if __name__ == "__main__":
     main()
