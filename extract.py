@@ -180,6 +180,8 @@ def main():
                             module_functions |= visited_js[js_url]
                         else:
                             js_path = download_js(js_url, platform)
+                            print(platform)
+                            print(js_path)
                             funcs = extract_functions(js_path)
                             visited_js[js_url] = funcs
                             module_functions |= funcs
