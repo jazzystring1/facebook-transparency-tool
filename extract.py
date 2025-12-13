@@ -3,6 +3,7 @@ import os
 import re
 import requests
 import hashlib
+import tldextract
 from datetime import datetime
 from urllib.parse import urlencode
 from urllib.parse import urlparse

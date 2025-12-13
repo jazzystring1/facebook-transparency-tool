@@ -20,6 +20,8 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y python3 python3-pip
+          pip3 install --upgrade pip
+          pip3 install tldextract
 
       - name: Run extract.py to download bootloaders
         run: |
