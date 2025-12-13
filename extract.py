@@ -46,11 +46,11 @@ def http_get(url):
 
 def platform_from_origin(origin: str) -> str:
     """
-    Returns the hostname of the origin, to be used as the platform folder.
+    Returns the main domain name without subdomains or TLD.
     Examples:
-        https://business.facebook.com -> business.facebook.com
-        www.instagram.com -> www.instagram.com
-        www.test.domain.com -> www.test.domain.com
+        https://business.facebook.com -> facebook
+        www.instagram.com -> instagram
+        www.test.domain.co.uk -> domain
     """
     origin = origin.strip()
 
@@ -59,7 +59,11 @@ def platform_from_origin(origin: str) -> str:
         origin = "https://" + origin
 
     parsed = urlparse(origin)
-    return parsed.hostname or "unknown"
+    hostname = parsed.hostname or "unknown"
+
+    # Extract domain using tldextract
+    ext = tldextract.extract(hostname)
+    return ext.domain or hostname
 
 def safe_js_filename(js_url: str) -> str:
     """
