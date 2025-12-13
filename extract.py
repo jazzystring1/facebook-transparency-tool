@@ -5,6 +5,7 @@ import requests
 import hashlib
 from datetime import datetime
 from urllib.parse import urlencode
+from urllib.parse import urlparse
 
 # -----------------------------
 # Config
