@@ -16,9 +16,6 @@ FUNCTIONS_JSON = "functions.json"
 BOOTLOADERS_BASE = "bootloaders"
 BOOTLOADER_REV = str(int(datetime.utcnow().timestamp()))
 
-with open(".current-bootloader-snapshot", "w") as f:
-    f.write(BOOTLOADER_REV)
-
 JS_REGEX = re.compile(r"https://[^\s\"']+\.js")
 FUNC_REGEX = re.compile(r'__d\("([^"]+)"')
 
@@ -112,6 +109,10 @@ def load_json(path):
 def save_json(path, data):
     with open(path, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2)
+
+def save_bootloader_snapshot():
+    with open(".current-bootloader-snapshot", "w") as f:
+        f.write(BOOTLOADER_REV)    
 
 def http_get(url):
     r = requests.get(url, timeout=REQUEST_TIMEOUT)
@@ -265,6 +266,7 @@ def main():
                     functions_data[module_name]["last_updated"] = now
 
     save_json(FUNCTIONS_JSON, functions_data)
+    save_bootloader_snapshot()
 
 if __name__ == "__main__":
     main()

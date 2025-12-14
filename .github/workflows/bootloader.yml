@@ -55,6 +55,37 @@ jobs:
                   find "$DOMAIN_DIR" -type f ! -name "js-route-builder.js" ! -name "relay-operations.js" ! -name "x-controllers.js" ! -name "hashes.json" -delete
               fi
           done
+      
+      - name: Run diff between previous and current bootloader snapshots
+        if: always()
+        run: |
+          ROOT="$GITHUB_WORKSPACE"
+          PRODUCT="${{ github.event.inputs.product }}"
+          BOOT_DIR="$ROOT/bootloaders/$PRODUCT"
+
+          # Get all timestamp folders sorted numerically
+          FOLDERS=($(ls -1d "$BOOT_DIR"/*/ | sort -n))
+          NUM_FOLDERS=${#FOLDERS[@]}
+
+          if [ $NUM_FOLDERS -ge 2 ]; then
+              OLD_TIMESTAMP=$(basename "${FOLDERS[$NUM_FOLDERS-2]}")
+              NEW_TIMESTAMP=$(basename "${FOLDERS[$NUM_FOLDERS-1]}")
+
+              OLD_FOLDER="$BOOT_DIR/$OLD_TIMESTAMP"
+              NEW_FOLDER="$BOOT_DIR/$NEW_TIMESTAMP"
+
+              DIFF_DIR="$ROOT/diffs/$PRODUCT/${OLD_TIMESTAMP}-${NEW_TIMESTAMP}"
+              mkdir -p "$DIFF_DIR"
+              touch "$DIFF_DIR/.gitkeep"
+
+              pushd "$DIFF_DIR" > /dev/null
+              python3 "$ROOT/diff.py" "$OLD_FOLDER" "$NEW_FOLDER"
+              popd > /dev/null
+
+              echo "Diff saved to $DIFF_DIR/output.js"
+          else
+              echo "Not enough bootloader folders to run diff"
+          fi
 
       - name: Commit results
         uses: stefanzweifel/git-auto-commit-action@v5
