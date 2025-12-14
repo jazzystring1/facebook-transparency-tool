@@ -18,10 +18,6 @@
           "LSSetHMPSStatus": {
             "first_seen": "2025-12-13T02:00:55.793951Z",
             "last_seen": "2025-12-13T02:00:56.912995Z"
-          },
-          "LSThreadsRangesQuery": {
-            "first_seen": "2025-12-13T02:00:55.793951Z",
-            "last_seen": "2025-12-13T02:00:56.912995Z"
           }
         }
       }
