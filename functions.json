@@ -1,62 +1,62 @@
 {
   "LSDeleteThenInsertIgThreadInfo": {
     "first_seen": "2025-12-14T02:12:35.647099Z",
-    "last_crawled": "2025-12-14T02:14:51.631180Z",
-    "last_updated": "2025-12-14T02:14:51.631180Z",
+    "last_crawled": "2025-12-14T03:51:39.036427Z",
+    "last_updated": "2025-12-14T03:51:39.036427Z",
     "functions": {}
   },
   "LSSetHMPSStatus": {
     "first_seen": "2025-12-14T02:12:35.647099Z",
-    "last_crawled": "2025-12-14T02:14:51.631180Z",
-    "last_updated": "2025-12-14T02:14:51.631180Z",
+    "last_crawled": "2025-12-14T03:51:39.036427Z",
+    "last_updated": "2025-12-14T03:51:39.036427Z",
     "functions": {}
   },
   "LSThreadsRangesQuery": {
     "first_seen": "2025-12-14T02:14:51.631180Z",
-    "last_crawled": "2025-12-14T02:14:51.631180Z",
-    "last_updated": "2025-12-14T02:14:51.631180Z",
+    "last_crawled": "2025-12-14T03:51:39.036427Z",
+    "last_updated": "2025-12-14T03:51:39.036427Z",
     "functions": {
       "LSDict": {
         "sources": [],
         "sinks": [
           "JSONParse"
         ],
-        "first_seen": "2025-12-14T02:14:52.895637Z"
+        "first_seen": "2025-12-14T03:51:40.364095Z"
       },
       "LocalStorageWrapper": {
         "sources": [
           "LocalStorage"
         ],
         "sinks": [],
-        "first_seen": "2025-12-14T02:14:52.897306Z"
+        "first_seen": "2025-12-14T03:51:40.365646Z"
       },
       "MAWVaultMaterials": {
         "sources": [],
         "sinks": [
           "JSONParse"
         ],
-        "first_seen": "2025-12-14T02:14:52.898057Z"
+        "first_seen": "2025-12-14T03:51:40.366344Z"
       },
       "WAGetStorageQplAnnotations": {
         "sources": [
           "IndexedDB"
         ],
         "sinks": [],
-        "first_seen": "2025-12-14T02:14:52.899913Z"
+        "first_seen": "2025-12-14T03:51:40.368219Z"
       },
       "fb-error": {
         "sources": [
           "Location"
         ],
         "sinks": [],
-        "first_seen": "2025-12-14T02:14:53.153191Z"
+        "first_seen": "2025-12-14T03:51:40.285172Z"
       },
       "BootloaderPreloader": {
         "sources": [],
         "sinks": [
           "SetAttribute"
         ],
-        "first_seen": "2025-12-14T02:14:53.155549Z"
+        "first_seen": "2025-12-14T03:51:40.287640Z"
       },
       "ReloadPage": {
         "sources": [
@@ -65,14 +65,14 @@
         "sinks": [
           "WindowLocation"
         ],
-        "first_seen": "2025-12-14T02:14:53.157888Z"
+        "first_seen": "2025-12-14T03:51:40.289972Z"
       },
       "URIRFC3986": {
         "sources": [],
         "sinks": [
           "RegExp"
         ],
-        "first_seen": "2025-12-14T02:14:53.158048Z"
+        "first_seen": "2025-12-14T03:51:40.290131Z"
       },
       "URIAbstractBase": {
         "sources": [
@@ -82,21 +82,21 @@
           "WindowLocation",
           "RegExp"
         ],
-        "first_seen": "2025-12-14T02:14:53.159241Z"
+        "first_seen": "2025-12-14T03:51:40.291298Z"
       },
       "URIBase": {
         "sources": [
           "Location"
         ],
         "sinks": [],
-        "first_seen": "2025-12-14T02:14:53.159647Z"
+        "first_seen": "2025-12-14T03:51:40.291697Z"
       },
       "isFacebookURI": {
         "sources": [],
         "sinks": [
           "RegExp"
         ],
-        "first_seen": "2025-12-14T02:14:53.159808Z"
+        "first_seen": "2025-12-14T03:51:40.291854Z"
       },
       "URI": {
         "sources": [
@@ -105,63 +105,63 @@
         "sinks": [
           "WindowLocation"
         ],
-        "first_seen": "2025-12-14T02:14:53.160335Z"
+        "first_seen": "2025-12-14T03:51:40.292377Z"
       },
       "MakeHasteTranslations": {
         "sources": [],
         "sinks": [
           "JSONParse"
         ],
-        "first_seen": "2025-12-14T02:14:53.162834Z"
+        "first_seen": "2025-12-14T03:51:40.294359Z"
       },
       "isExternalFBURI": {
         "sources": [],
         "sinks": [
           "RegExp"
         ],
-        "first_seen": "2025-12-14T02:14:53.164035Z"
+        "first_seen": "2025-12-14T03:51:40.295574Z"
       },
       "isInstagramCDNURI": {
         "sources": [],
         "sinks": [
           "RegExp"
         ],
-        "first_seen": "2025-12-14T02:14:53.164161Z"
+        "first_seen": "2025-12-14T03:51:40.295680Z"
       },
       "isInstagramURI": {
         "sources": [],
         "sinks": [
           "RegExp"
         ],
-        "first_seen": "2025-12-14T02:14:53.164207Z"
+        "first_seen": "2025-12-14T03:51:40.295727Z"
       },
       "isInternURI": {
         "sources": [],
         "sinks": [
           "RegExp"
         ],
-        "first_seen": "2025-12-14T02:14:53.164241Z"
+        "first_seen": "2025-12-14T03:51:40.295762Z"
       },
       "isInternalFBURI": {
         "sources": [],
         "sinks": [
           "RegExp"
         ],
-        "first_seen": "2025-12-14T02:14:53.164275Z"
+        "first_seen": "2025-12-14T03:51:40.295795Z"
       },
       "isMetaDotComURI": {
         "sources": [],
         "sinks": [
           "RegExp"
         ],
-        "first_seen": "2025-12-14T02:14:53.164321Z"
+        "first_seen": "2025-12-14T03:51:40.295841Z"
       },
       "isOculusDotComURI": {
         "sources": [],
         "sinks": [
           "RegExp"
         ],
-        "first_seen": "2025-12-14T02:14:53.164431Z"
+        "first_seen": "2025-12-14T03:51:40.295930Z"
       },
       "Bootloader": {
         "sources": [
@@ -172,28 +172,28 @@
           "SetSrc",
           "SetAttribute"
         ],
-        "first_seen": "2025-12-14T02:14:53.167660Z"
+        "first_seen": "2025-12-14T03:51:40.299081Z"
       },
       "ImmediateImplementation": {
         "sources": [],
         "sinks": [
           "PostMessage"
         ],
-        "first_seen": "2025-12-14T02:14:53.168023Z"
+        "first_seen": "2025-12-14T03:51:40.299443Z"
       },
       "isMessengerDotComURI": {
         "sources": [],
         "sinks": [
           "RegExp"
         ],
-        "first_seen": "2025-12-14T02:14:53.168297Z"
+        "first_seen": "2025-12-14T03:51:40.299734Z"
       },
       "isWorkplaceDotComURI": {
         "sources": [],
         "sinks": [
           "RegExp"
         ],
-        "first_seen": "2025-12-14T02:14:53.168334Z"
+        "first_seen": "2025-12-14T03:51:40.299773Z"
       },
       "WebStorage": {
         "sources": [
@@ -201,7 +201,7 @@
           "SessionStorage"
         ],
         "sinks": [],
-        "first_seen": "2025-12-14T02:14:53.169654Z"
+        "first_seen": "2025-12-14T03:51:40.301041Z"
       },
       "getAsyncParamsForProfiling": {
         "sources": [
@@ -210,7 +210,7 @@
         "sinks": [
           "WindowLocation"
         ],
-        "first_seen": "2025-12-14T02:14:53.170157Z"
+        "first_seen": "2025-12-14T03:51:40.301490Z"
       },
       "getAsyncParamsFromCurrentPageURI": {
         "sources": [
@@ -219,21 +219,21 @@
         "sinks": [
           "WindowLocation"
         ],
-        "first_seen": "2025-12-14T02:14:53.170240Z"
+        "first_seen": "2025-12-14T03:51:40.301570Z"
       },
       "CSSCore": {
         "sources": [],
         "sinks": [
           "RegExp"
         ],
-        "first_seen": "2025-12-14T02:14:53.170383Z"
+        "first_seen": "2025-12-14T03:51:40.301710Z"
       },
       "getAsyncParams": {
         "sources": [
           "Location"
         ],
         "sinks": [],
-        "first_seen": "2025-12-14T02:14:53.170838Z"
+        "first_seen": "2025-12-14T03:51:40.302213Z"
       },
       "BootloaderEndpoint": {
         "sources": [
@@ -243,14 +243,14 @@
           "WindowLocation",
           "JSONParse"
         ],
-        "first_seen": "2025-12-14T02:14:53.171493Z"
+        "first_seen": "2025-12-14T03:51:40.302868Z"
       },
       "Scheduler-profiling.classic": {
         "sources": [],
         "sinks": [
           "PostMessage"
         ],
-        "first_seen": "2025-12-14T02:14:53.173811Z"
+        "first_seen": "2025-12-14T03:51:40.305151Z"
       },
       "unstable_server-external-runtime-exp": {
         "sources": [],
@@ -258,7 +258,7 @@
           "JSONParse",
           "SetAttribute"
         ],
-        "first_seen": "2025-12-14T02:14:53.177101Z"
+        "first_seen": "2025-12-14T03:51:40.308259Z"
       },
       "unstable_server-external-runtime-old": {
         "sources": [],
@@ -266,42 +266,42 @@
           "JSONParse",
           "SetAttribute"
         ],
-        "first_seen": "2025-12-14T02:14:53.177607Z"
+        "first_seen": "2025-12-14T03:51:40.308742Z"
       },
       "hyperionCore": {
         "sources": [],
         "sinks": [
           "RegExp"
         ],
-        "first_seen": "2025-12-14T02:14:53.181803Z"
+        "first_seen": "2025-12-14T03:51:40.312748Z"
       },
       "ServerJSPayloadListener": {
         "sources": [],
         "sinks": [
           "JSONParse"
         ],
-        "first_seen": "2025-12-14T02:14:53.184128Z"
+        "first_seen": "2025-12-14T03:51:40.314766Z"
       },
       "ServerJSPayloadListener_NEW": {
         "sources": [],
         "sinks": [
           "JSONParse"
         ],
-        "first_seen": "2025-12-14T02:14:53.184233Z"
+        "first_seen": "2025-12-14T03:51:40.314868Z"
       },
       "getDocumentDomain": {
         "sources": [
           "Location"
         ],
         "sinks": [],
-        "first_seen": "2025-12-14T02:14:53.403516Z"
+        "first_seen": "2025-12-14T03:51:40.593506Z"
       },
       "isMWAppsSubdomainExperiment": {
         "sources": [
           "Location"
         ],
         "sinks": [],
-        "first_seen": "2025-12-14T02:14:53.403577Z"
+        "first_seen": "2025-12-14T03:51:40.593566Z"
       },
       "LSPlatformLsInitLog": {
         "sources": [
@@ -310,14 +310,14 @@
         "sinks": [
           "WindowLocation"
         ],
-        "first_seen": "2025-12-14T02:14:53.404049Z"
+        "first_seen": "2025-12-14T03:51:40.594058Z"
       },
       "SecurePostMessage": {
         "sources": [],
         "sinks": [
           "PostMessage"
         ],
-        "first_seen": "2025-12-14T02:14:53.412927Z"
+        "first_seen": "2025-12-14T03:51:40.603113Z"
       }
     }
   }
