@@ -29,8 +29,10 @@ jobs:
 
       - name: Generate JS extraction files
         run: |
-          for DOMAIN_DIR in bootloaders/*; do
-              if [ -d "$DOMAIN_DIR" ]; then
+          for PLATFORM_DIR in bootloaders/*; do
+              if [ -d "$PLATFORM_DIR" ]; then
+                  TIMESTAMP=$(cat "$PLATFORM_DIR/.current-bootloader-rev")
+                  DOMAIN_DIR="$PLATFORM_DIR/$TIMESTAMP"
                   echo "Processing $DOMAIN_DIR ..."
                   grep -Rh 'jsRouteBuilder")(' "$DOMAIN_DIR" > "$DOMAIN_DIR/js-route-builder.js" || true
                   grep -Rh 'RelayOperation",\[' "$DOMAIN_DIR" > "$DOMAIN_DIR/relay-operations.js" || true
@@ -40,8 +42,10 @@ jobs:
 
       - name: Run hash.py on each bootloader domain directory
         run: |
-          for DOMAIN_DIR in bootloaders/*; do
-              if [ -d "$DOMAIN_DIR" ]; then
+          for PLATFORM_DIR in bootloaders/*; do
+              if [ -d "$PLATFORM_DIR" ]; then
+                  TIMESTAMP=$(cat "$PLATFORM_DIR/.current-bootloader-rev")
+                  DOMAIN_DIR="$PLATFORM_DIR/$TIMESTAMP"
                   echo "Hashing $DOMAIN_DIR ..."
                   python3 hash.py "$DOMAIN_DIR"
               fi
@@ -49,12 +53,15 @@ jobs:
 
       - name: Clean up downloaded JS files
         run: |
-          for DOMAIN_DIR in bootloaders/*; do
-              if [ -d "$DOMAIN_DIR" ]; then
+          for PLATFORM_DIR in bootloaders/*; do
+              if [ -d "$PLATFORM_DIR" ]; then
+                  TIMESTAMP=$(cat "$PLATFORM_DIR/.current-bootloader-rev")
+                  DOMAIN_DIR="$PLATFORM_DIR/$TIMESTAMP"
                   echo "Cleaning JS files in $DOMAIN_DIR ..."
                   find "$DOMAIN_DIR" -type f ! -name "js-route-builder.js" ! -name "relay-operations.js" ! -name "x-controllers.js" ! -name "hashes.json" -delete
               fi
           done
+
       
       - name: Run diff between previous and current bootloader snapshots
         if: always()
