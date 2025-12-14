@@ -61,7 +61,7 @@ jobs:
               if [ -d "$PLATFORM_DIR" ]; then
                   DOMAIN_DIR="$PLATFORM_DIR/${{ steps.boot_rev.outputs.current_rev }}"
                   echo "Cleaning JS files in $DOMAIN_DIR ..."
-                  find "$DOMAIN_DIR" -type f ! -name "js-route-builder.js" ! -name "relay-operations.js" ! -name "x-controllers.js" ! -name "hashes.json" -delete
+                  find "$DOMAIN_DIR" -type f ! -name "js-route-builder.js" ! -name "relay-operations.js" ! -name "x-controllers.js" ! -name "hashes.json" ! -name "others.js" -delete
               fi
           done
 
