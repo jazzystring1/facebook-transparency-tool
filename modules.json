@@ -22,6 +22,14 @@
           "LSThreadsRangesQuery": {
             "first_seen": "2025-12-13T02:00:55.793951Z",
             "last_seen": "2025-12-13T02:00:56.912995Z"
+          },
+          "LSIssueThreadCapabilitySyncTask": {
+            "first_seen": "2025-12-13T02:00:55.793951Z",
+            "last_seen": "2025-12-13T02:00:56.912995Z"
+          },
+          "IGDChatTabMessageNotificationsContainer.react": {
+            "first_seen": "2025-12-13T02:00:55.807214Z",
+            "last_seen": "2025-12-13T02:00:56.928054Z"
           }
         }
       }
