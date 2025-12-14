@@ -27,12 +27,17 @@ jobs:
         run: |
           python3 extract.py
 
+      - name: Read current bootloader rev
+        id: boot_rev
+        run: |
+          CURRENT_REV=$(cat .current-bootloader-snapshot)
+          echo "current_rev=$CURRENT_REV" >> $GITHUB_OUTPUT
+
       - name: Generate JS extraction files
         run: |
           for PLATFORM_DIR in bootloaders/*; do
               if [ -d "$PLATFORM_DIR" ]; then
-                  TIMESTAMP=$(cat "$PLATFORM_DIR/.current-bootloader-rev")
-                  DOMAIN_DIR="$PLATFORM_DIR/$TIMESTAMP"
+                  DOMAIN_DIR="$PLATFORM_DIR/${{ steps.boot_rev.outputs.current_rev }}"
                   echo "Processing $DOMAIN_DIR ..."
                   grep -Rh 'jsRouteBuilder")(' "$DOMAIN_DIR" > "$DOMAIN_DIR/js-route-builder.js" || true
                   grep -Rh 'RelayOperation",\[' "$DOMAIN_DIR" > "$DOMAIN_DIR/relay-operations.js" || true
@@ -44,8 +49,7 @@ jobs:
         run: |
           for PLATFORM_DIR in bootloaders/*; do
               if [ -d "$PLATFORM_DIR" ]; then
-                  TIMESTAMP=$(cat "$PLATFORM_DIR/.current-bootloader-rev")
-                  DOMAIN_DIR="$PLATFORM_DIR/$TIMESTAMP"
+                  DOMAIN_DIR="$PLATFORM_DIR/${{ steps.boot_rev.outputs.current_rev }}"
                   echo "Hashing $DOMAIN_DIR ..."
                   python3 hash.py "$DOMAIN_DIR"
               fi
@@ -55,12 +59,12 @@ jobs:
         run: |
           for PLATFORM_DIR in bootloaders/*; do
               if [ -d "$PLATFORM_DIR" ]; then
-                  TIMESTAMP=$(cat "$PLATFORM_DIR/.current-bootloader-rev")
-                  DOMAIN_DIR="$PLATFORM_DIR/$TIMESTAMP"
+                  DOMAIN_DIR="$PLATFORM_DIR/${{ steps.boot_rev.outputs.current_rev }}"
                   echo "Cleaning JS files in $DOMAIN_DIR ..."
                   find "$DOMAIN_DIR" -type f ! -name "js-route-builder.js" ! -name "relay-operations.js" ! -name "x-controllers.js" ! -name "hashes.json" -delete
               fi
           done
+
 
       
       - name: Run diff between previous and current bootloader snapshots
