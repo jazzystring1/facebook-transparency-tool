@@ -60,32 +60,45 @@ jobs:
         if: always()
         run: |
           ROOT="$GITHUB_WORKSPACE"
-          PRODUCT="${{ github.event.inputs.product }}"
-          BOOT_DIR="$ROOT/bootloaders/$PRODUCT"
+          BOOT_BASE="$ROOT/bootloaders"
 
-          # Get all timestamp folders sorted numerically
-          FOLDERS=($(ls -1d "$BOOT_DIR"/*/ | sort -n))
-          NUM_FOLDERS=${#FOLDERS[@]}
+          for PRODUCT_DIR in "$BOOT_BASE"/*; do
+              if [ -d "$PRODUCT_DIR" ]; then
+                  PRODUCT=$(basename "$PRODUCT_DIR")
+                  echo "Processing product: $PRODUCT"
 
-          if [ $NUM_FOLDERS -ge 2 ]; then
-              OLD_TIMESTAMP=$(basename "${FOLDERS[$NUM_FOLDERS-2]}")
-              NEW_TIMESTAMP=$(basename "${FOLDERS[$NUM_FOLDERS-1]}")
+                  # Get all timestamp folders sorted numerically
+                  FOLDERS=($(ls -1d "$PRODUCT_DIR"/*/ 2>/dev/null | sort -n))
+                  NUM_FOLDERS=${#FOLDERS[@]}
 
-              OLD_FOLDER="$BOOT_DIR/$OLD_TIMESTAMP"
-              NEW_FOLDER="$BOOT_DIR/$NEW_TIMESTAMP"
+                  if [ $NUM_FOLDERS -ge 2 ]; then
+                      OLD_TIMESTAMP=$(basename "${FOLDERS[$NUM_FOLDERS-2]}")
+                      NEW_TIMESTAMP=$(basename "${FOLDERS[$NUM_FOLDERS-1]}")
 
-              DIFF_DIR="$ROOT/diffs/$PRODUCT/${OLD_TIMESTAMP}-${NEW_TIMESTAMP}"
-              mkdir -p "$DIFF_DIR"
-              touch "$DIFF_DIR/.gitkeep"
+                      # Check against .current-bootloader-snapshot
+                      CURRENT_SNAPSHOT_FILE="$ROOT/.current-bootloader-snapshot"
+                      CURRENT_SNAPSHOT=$(cat "$CURRENT_SNAPSHOT_FILE" 2>/dev/null || echo "")
+                      if [ "$NEW_TIMESTAMP" != "$CURRENT_SNAPSHOT" ]; then
+                          echo "[WARN] Latest folder ($NEW_TIMESTAMP) does not match .current-bootloader-snapshot ($CURRENT_SNAPSHOT)"
+                      fi
 
-              pushd "$DIFF_DIR" > /dev/null
-              python3 "$ROOT/diff.py" "$OLD_FOLDER" "$NEW_FOLDER"
-              popd > /dev/null
+                      OLD_FOLDER="$PRODUCT_DIR/$OLD_TIMESTAMP"
+                      NEW_FOLDER="$PRODUCT_DIR/$NEW_TIMESTAMP"
 
-              echo "Diff saved to $DIFF_DIR/output.js"
-          else
-              echo "Not enough bootloader folders to run diff"
-          fi
+                      DIFF_DIR="$ROOT/diffs/bootloaders/$PRODUCT/${OLD_TIMESTAMP}-${NEW_TIMESTAMP}"
+                      mkdir -p "$DIFF_DIR"
+                      touch "$DIFF_DIR/.gitkeep"
+
+                      pushd "$DIFF_DIR" > /dev/null
+                      python3 "$ROOT/diff.py" "$OLD_FOLDER" "$NEW_FOLDER"
+                      popd > /dev/null
+
+                      echo "Diff saved to $DIFF_DIR/output.js"
+                  else
+                      echo "Not enough bootloader folders for product $PRODUCT to run diff"
+                  fi
+              fi
+          done
 
       - name: Commit results
         uses: stefanzweifel/git-auto-commit-action@v5

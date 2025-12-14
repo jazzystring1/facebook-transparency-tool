@@ -174,7 +174,7 @@ def extract_functions(js_path, platform_folder):
                 continue
 
             func_name = match.group(1)
-
+            print(func_name)
             # Human-readable sources and sinks
             sources_found = [SOURCE_MAP[p] for p in SOURCE_PATTERNS if re.search(p, line)]
             sinks_found = [SINK_MAP[p] for p in SINK_PATTERNS if re.search(p, line)]
@@ -185,7 +185,8 @@ def extract_functions(js_path, platform_folder):
             if sources_found or sinks_found or special_match:
                 funcs[func_name] = {
                     "sources": sources_found,
-                    "sinks": sinks_found
+                    "sinks": sinks_found,
+                    "first_seen": datetime.utcnow().isoformat() + "Z"
                 }
                 # Only write to others.js if it's not a special pattern
                 if not special_match:
@@ -211,7 +212,8 @@ def main():
         base_url = origin.rstrip("/") if origin.startswith(("http://", "https://")) else f"https://{origin}"
         platform = platform_from_origin(origin)
         platform_folder = os.path.join(BOOTLOADERS_BASE, platform)
-        os.makedirs(platform_folder, exist_ok=True)
+        platform_rev = os.path.join(platform_folder, BOOTLOADER_REV)
+        os.makedirs(platform_rev, exist_ok=True)
 
         for path, path_data in origin_data.items():
             params = path_data.get("parameters", {})
@@ -241,7 +243,7 @@ def main():
                     try:
                         if key not in visited_js:
                             js_path = download_js(js_url, platform)
-                            funcs = extract_functions(js_path, platform_folder)
+                            funcs = extract_functions(js_path, platform_rev)
                             visited_js[key] = funcs
                     except Exception as e:
                         print(f"[-] JS error: {js_url} ({e})")
